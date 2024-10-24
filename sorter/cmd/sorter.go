@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"slices"
 )
 
 func main() {
@@ -24,6 +25,7 @@ func main() {
 	}
 	mergeInsertionSort(&inputList)
 	fmt.Println("Sorted list: ")
+	slices.Reverse(inputList)
 	printSlice(inputList)
 }
 
