@@ -22,10 +22,16 @@ func main() {
 	for scanner.Scan() {
 		inputList = append(inputList, scanner.Text())
 	}
-	mergeInsertionSort(&inputList)
+	// mergeInsertionSort(&inputList) //put back in
+	testSortedList := []string{"a", "c", "e"}
+	testUnsortedList := []string{"b", "f", "d", "g"}
+	insertionSort(&testSortedList, &testUnsortedList)
 
 	fmt.Println("Sorted list: ")
-	printSlice(inputList)
+	printSlice(testSortedList)
+
+	// fmt.Println("Sorted list: ") // put back in
+	// printSlice(inputList)
 }
 
 // mergeInsertionSort performs the merge-insertion sort: https://en.wikipedia.org/wiki/Merge-insertion_sort
@@ -65,11 +71,38 @@ func mergeInsertionSort(inputList *[]string) {
 }
 
 func insertionSort(sortedList *[]string, unsortedList *[]string) {
-	// toSort := removeRandomElement(unsortedList)
+	// newList := make([]string, 0, len(*sortedList) + len(*unsortedList))
+	for len(*unsortedList) != 0 {
+		toSort := removeRandomElement(unsortedList)
+		*sortedList = append([]string{toSort}, *sortedList...)
+		fmt.Println("State:")
+		printSlice(*sortedList)
+		for i := range len(*sortedList)-1 {
+			higher, _ := promptToSortTwoInputs((*sortedList)[i], (*sortedList)[i+1])
+			if toSort == higher {
+				// Out of order, need to swap
+				(*sortedList)[i] = (*sortedList)[i+1]
+				(*sortedList)[i+1] = toSort
+			} else {
+				// In correct order, no need to continue through the sorted list
+				break
+			}
+		}
+	}
+
 	// for idx, value := range *sortedList {
-	// 	i1, i2, err := promptToSortTwoInputs(value, toSort)
-	// // 	if 
+	// 	higher, lower := promptToSortTwoInputs(value, toSort)
+	// 	// newList = append(newList, higher)
+	// 	// newList = append(newList, lower)
+	// 	if toSort == higher {
+	// 		sortedList = append(append((*sortedList)[:idx], toSort), (*sortedList)[idx:])
+	// 	} else {
+	// 		// We're done with this one, no need to go through the rest of the sorted list
+	// 		// sortedList = /
+	// 		break
+	// 	}
 	// }
+
 }
 
 
