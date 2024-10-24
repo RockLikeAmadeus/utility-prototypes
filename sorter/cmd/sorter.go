@@ -27,6 +27,19 @@ func main() {
 }
 
 func sortInput(inputList *[]string) {
+	if len(*inputList) == 1 {
+		return
+	}
+	// if len(*inputList) == 2 {
+	// 	var err error
+	// 	(*inputList)[0], (*inputList)[1], err = promptToSortTwoInputs((*inputList)[0], (*inputList)[1])
+	// 	for err != nil {
+	// 		fmt.Println("Error: Please enter either '1' or '2'")
+	// 		(*inputList)[0], (*inputList)[1], err = promptToSortTwoInputs((*inputList)[0], (*inputList)[1])
+	// 	}
+	// 	return
+	// }
+
 	winners := make([]string, 0, len(*inputList)/2 + 1)
 	losers := make([]string, 0, len(*inputList)/2 + 1)
 
@@ -45,11 +58,12 @@ func sortInput(inputList *[]string) {
 		losers = append(losers, (*inputList)[0])
 	}
 
-
 	fmt.Println("Winners: ")
 	printSlice(winners)
 	fmt.Println("Losers: ")
 	printSlice(losers)
+
+	sortInput(&winners)
 }
 
 // promptToSortTwoInputs prompts the user to enter the higher of the inputs, then returns them in order
