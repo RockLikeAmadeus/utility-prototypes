@@ -32,7 +32,7 @@ func main() {
 
 func sortInput(inputList []string) {
 	printInput(inputList)
-	fmt.Println("Removed: ", removeElementAtIndex(2, &inputList))
+	fmt.Println("Removed: ", removeRandomElement(&inputList))
 	printInput(inputList)
 
 	// s1 = inputList[len(inputList)-1]
@@ -49,9 +49,9 @@ func removeElementAtIndex(index int, inputList *[]string) string {
 }
 
 
-// func removeRandomElement(*[]string inputList) {
-
-// }
+func removeRandomElement(inputList *[]string) string {
+	return removeElementAtIndex(rand.Intn(len(*inputList)), inputList)
+}
 
 
 
