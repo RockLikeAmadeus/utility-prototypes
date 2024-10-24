@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"math/rand"
 	"os"
@@ -23,34 +22,26 @@ func main() {
 	for scanner.Scan() {
 		inputList = append(inputList, scanner.Text())
 	}
-	sortInput(&inputList)
+	mergeInsertionSort(&inputList)
+
+	fmt.Println("Sorted list: ")
+	printSlice(inputList)
 }
 
-func sortInput(inputList *[]string) {
+// mergeInsertionSort performs the merge-insertion sort: https://en.wikipedia.org/wiki/Merge-insertion_sort
+func mergeInsertionSort(inputList *[]string) {
 	if len(*inputList) == 1 {
 		return
 	}
-	// if len(*inputList) == 2 {
-	// 	var err error
-	// 	(*inputList)[0], (*inputList)[1], err = promptToSortTwoInputs((*inputList)[0], (*inputList)[1])
-	// 	for err != nil {
-	// 		fmt.Println("Error: Please enter either '1' or '2'")
-	// 		(*inputList)[0], (*inputList)[1], err = promptToSortTwoInputs((*inputList)[0], (*inputList)[1])
-	// 	}
-	// 	return
-	// }
 
+	// Step 1 and 2
 	winners := make([]string, 0, len(*inputList)/2 + 1)
 	losers := make([]string, 0, len(*inputList)/2 + 1)
 
 	for len(*inputList) > 1 {
 		s1 := removeRandomElement(inputList)
 		s2 := removeRandomElement(inputList)
-		higher, lower, err := promptToSortTwoInputs(s1, s2)
-		for err != nil {
-			fmt.Println("Error: Please enter either '1' or '2'")
-			higher, lower, err = promptToSortTwoInputs(s1, s2)
-		}
+		higher, lower := promptToSortTwoInputs(s1, s2)
 		winners = append(winners, higher)
 		losers = append(losers, lower)
 	}
@@ -58,16 +49,33 @@ func sortInput(inputList *[]string) {
 		losers = append(losers, (*inputList)[0])
 	}
 
-	fmt.Println("Winners: ")
-	printSlice(winners)
-	fmt.Println("Losers: ")
-	printSlice(losers)
+	// fmt.Println("Winners: ")
+	// printSlice(winners)
+	// fmt.Println("Losers: ")
+	// printSlice(losers)
 
-	sortInput(&winners)
+	// Step 3
+	mergeInsertionSort(&winners)
+
+	// Step 4
+	// skip for now
+
+	// Step 5
+	insertionSort(&winners, &losers)
 }
 
+func insertionSort(sortedList *[]string, unsortedList *[]string) {
+	// toSort := removeRandomElement(unsortedList)
+	// for idx, value := range *sortedList {
+	// 	i1, i2, err := promptToSortTwoInputs(value, toSort)
+	// // 	if 
+	// }
+}
+
+
+
 // promptToSortTwoInputs prompts the user to enter the higher of the inputs, then returns them in order
-func promptToSortTwoInputs( s1 string, s2 string) (string, string, error) {
+func promptToSortTwoInputs(s1 string, s2 string) (string, string) {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Choose the larger of: ")
 	fmt.Println("1. ", s1)
@@ -80,13 +88,12 @@ func promptToSortTwoInputs( s1 string, s2 string) (string, string, error) {
 		panic(err)
 	}
 	if input == '1' {
-		fmt.Println("good choice")
-		return s1, s2, nil
+		return s1, s2
 	} else if input == '2' {
-		fmt.Println("good choice")
-		return s2, s1, nil
+		return s2, s1
 	} else {
-		return "", "", errors.New("invalid input")
+		fmt.Println("Error: Please enter either '1' or '2'")
+		return promptToSortTwoInputs(s1, s2)
 	}
 }
 
