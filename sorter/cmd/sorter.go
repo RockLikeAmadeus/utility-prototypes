@@ -39,7 +39,6 @@ func sortInput(inputList *[]string) {
 		fmt.Println("Error: Please enter either '1' or '2'")
 		err = promptToSortValues(s1, s2)
 	}
-	// fmt.Println(s1, s2)
 }
 
 func promptToSortValues( s1 string, s2 string) error {
