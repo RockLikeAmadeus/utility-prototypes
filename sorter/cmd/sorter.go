@@ -23,13 +23,6 @@ func main() {
 		inputList = append(inputList, scanner.Text())
 	}
 	mergeInsertionSort(&inputList)
-	// testSortedList := []string{"a", "c", "e"}
-	// testUnsortedList := []string{"b", "f", "d", "g"}
-	// insertionSort(&testSortedList, &testUnsortedList)
-
-	// fmt.Println("Sorted list: ")
-	// printSlice(testSortedList)
-
 	fmt.Println("Sorted list: ")
 	printSlice(inputList)
 }
@@ -40,7 +33,7 @@ func mergeInsertionSort(inputList *[]string) {
 		return
 	}
 
-	// Step 1 and 2
+	// Steps 1 and 2
 	winners := make([]string, 0, len(*inputList)/2 + 1)
 	losers := make([]string, 0, len(*inputList)/2 + 1)
 
@@ -55,16 +48,11 @@ func mergeInsertionSort(inputList *[]string) {
 		losers = append(losers, (*inputList)[0])
 	}
 
-	// fmt.Println("Winners: ")
-	// printSlice(winners)
-	// fmt.Println("Losers: ")
-	// printSlice(losers)
-
 	// Step 3
 	mergeInsertionSort(&winners)
 
 	// Step 4
-	// skip for now
+	// skip for now, TODO, add step 4 to reduce comparisons
 
 	// Step 5
 	insertionSort(&winners, &losers)
@@ -76,8 +64,6 @@ func insertionSort(sortedList *[]string, unsortedList *[]string) {
 	for len(*unsortedList) != 0 {
 		toSort := removeRandomElement(unsortedList)
 		*sortedList = append([]string{toSort}, *sortedList...)
-		fmt.Println("State:")
-		printSlice(*sortedList)
 		for i := range len(*sortedList)-1 {
 			higher, _ := promptToSortTwoInputs((*sortedList)[i], (*sortedList)[i+1])
 			if toSort == higher {
