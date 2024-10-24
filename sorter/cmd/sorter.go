@@ -30,15 +30,21 @@ func sortInput(inputList *[]string) {
 	winners := make([]string, 0, len(*inputList)/2 + 1)
 	losers := make([]string, 0, len(*inputList)/2 + 1)
 
-	s1 := removeRandomElement(inputList)
-	s2 := removeRandomElement(inputList)
-	higher, lower, err := promptToSortTwoInputs(s1, s2)
-	for err != nil {
-		fmt.Println("Error: Please enter either '1' or '2'")
-		higher, lower, err = promptToSortTwoInputs(s1, s2)
+	for len(*inputList) > 1 {
+		s1 := removeRandomElement(inputList)
+		s2 := removeRandomElement(inputList)
+		higher, lower, err := promptToSortTwoInputs(s1, s2)
+		for err != nil {
+			fmt.Println("Error: Please enter either '1' or '2'")
+			higher, lower, err = promptToSortTwoInputs(s1, s2)
+		}
+		winners = append(winners, higher)
+		losers = append(losers, lower)
 	}
-	winners = append(winners, higher)
-	losers = append(losers, lower)
+	if len(*inputList) == 1 {
+		losers = append(losers, (*inputList)[0])
+	}
+
 
 	fmt.Println("Winners: ")
 	printSlice(winners)
