@@ -22,16 +22,16 @@ func main() {
 	for scanner.Scan() {
 		inputList = append(inputList, scanner.Text())
 	}
-	// mergeInsertionSort(&inputList) //put back in
-	testSortedList := []string{"a", "c", "e"}
-	testUnsortedList := []string{"b", "f", "d", "g"}
-	insertionSort(&testSortedList, &testUnsortedList)
+	mergeInsertionSort(&inputList)
+	// testSortedList := []string{"a", "c", "e"}
+	// testUnsortedList := []string{"b", "f", "d", "g"}
+	// insertionSort(&testSortedList, &testUnsortedList)
+
+	// fmt.Println("Sorted list: ")
+	// printSlice(testSortedList)
 
 	fmt.Println("Sorted list: ")
-	printSlice(testSortedList)
-
-	// fmt.Println("Sorted list: ") // put back in
-	// printSlice(inputList)
+	printSlice(inputList)
 }
 
 // mergeInsertionSort performs the merge-insertion sort: https://en.wikipedia.org/wiki/Merge-insertion_sort
@@ -68,10 +68,11 @@ func mergeInsertionSort(inputList *[]string) {
 
 	// Step 5
 	insertionSort(&winners, &losers)
+
+	*inputList = winners
 }
 
 func insertionSort(sortedList *[]string, unsortedList *[]string) {
-	// newList := make([]string, 0, len(*sortedList) + len(*unsortedList))
 	for len(*unsortedList) != 0 {
 		toSort := removeRandomElement(unsortedList)
 		*sortedList = append([]string{toSort}, *sortedList...)
@@ -89,20 +90,6 @@ func insertionSort(sortedList *[]string, unsortedList *[]string) {
 			}
 		}
 	}
-
-	// for idx, value := range *sortedList {
-	// 	higher, lower := promptToSortTwoInputs(value, toSort)
-	// 	// newList = append(newList, higher)
-	// 	// newList = append(newList, lower)
-	// 	if toSort == higher {
-	// 		sortedList = append(append((*sortedList)[:idx], toSort), (*sortedList)[idx:])
-	// 	} else {
-	// 		// We're done with this one, no need to go through the rest of the sorted list
-	// 		// sortedList = /
-	// 		break
-	// 	}
-	// }
-
 }
 
 
