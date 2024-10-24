@@ -31,15 +31,21 @@ func main() {
 }
 
 func sortInput(inputList []string) {
-	printInput(inputList)
-	fmt.Println("Removed: ", removeRandomElement(&inputList))
-	printInput(inputList)
+	// printSlice(inputList)
+	// fmt.Println("Removed: ", removeRandomElement(&inputList))
+	// printSlice(inputList)
 
-	// s1 = inputList[len(inputList)-1]
+	s1 := removeRandomElement(&inputList)
+	s2 := removeRandomElement(&inputList)
 	// topHalf := make([]string, 0)
 	// bottomHalf := make([]string, 0)
-	fmt.Println("Choose the larger of")
-	fmt.Println(rand.Intn(len(inputList)))
+	fmt.Println("Choose the larger of: ")
+	fmt.Println("1. ", s1)
+	fmt.Println("2. ", s2)
+}
+
+func removeRandomElement(inputList *[]string) string {
+	return removeElementAtIndex(rand.Intn(len(*inputList)), inputList)
 }
 
 func removeElementAtIndex(index int, inputList *[]string) string {
@@ -48,14 +54,7 @@ func removeElementAtIndex(index int, inputList *[]string) string {
 	return res
 }
 
-
-func removeRandomElement(inputList *[]string) string {
-	return removeElementAtIndex(rand.Intn(len(*inputList)), inputList)
-}
-
-
-
-func printInput(inputList []string) {
+func printSlice(inputList []string) {
 	fmt.Println()
 	fmt.Println("Printing input list: ")
 	for _, item := range inputList {
