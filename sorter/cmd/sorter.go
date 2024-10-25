@@ -8,9 +8,19 @@ import (
 	"slices"
 )
 
+const backupFilePath = "todo.txt.bak"
+
 var numberOfComparisons = 0
+var backupFile *os.File
+var err error
 
 func main() {
+	// Create backup file
+	backupFile, err = createBackupFile()
+	if err != nil {
+		fmt.Println("Error creating backup file. Exiting.")
+	}
+
 	// TODO
 	// Upon reading in the file, use the formula at https://en.wikipedia.org/wiki/Merge-insertion_sort
 	// to estimate the number of comparisons required. Display the value and keep displaying count of
@@ -27,7 +37,9 @@ func main() {
 	inputList := make([]string, 0)
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		inputList = append(inputList, scanner.Text())
+		readLine := scanner.Text()
+		inputList = append(inputList, readLine)
+		writeLineToBackupFile(readLine)
 	}
 	mergeInsertionSortAscending(&inputList)
 	fmt.Println("Sorted list: ")
@@ -190,4 +202,19 @@ func printSlice(inputList []string) {
 		fmt.Println(item)
 	}
 	fmt.Println("-------End of list")
+}
+
+func createBackupFile() (*os.File, error) {
+	return os.Create(backupFilePath) // Creates an empty file, even if one already exists.
+}
+
+func writeLineToBackupFile(line string) {
+	_, err := backupFile.WriteString(line)
+	if err != nil {
+		fmt.Println("Error writing to backup file. Exiting.")
+	}
+	_, err = backupFile.WriteString("\n")
+	if err != nil {
+		fmt.Println("Error writing to backup file. Exiting.")
+	}
 }
