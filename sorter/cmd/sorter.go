@@ -46,15 +46,18 @@ func mergeInsertionSortAscending(inputList *[]string) {
 	*/
 	winners := make([]string, 0, len(*inputList)/2 + 1)
 	losers := make([]string, 0, len(*inputList)/2 + 1)
-	pairings := make(map[string]string) // the loser, index by the winner
+	pairings := make(map[string]string) // the loser, indexed by the winner
 
 	for len(*inputList) > 1 {
 		s1 := removeRandomElement(inputList)
 		s2 := removeRandomElement(inputList)
+		fmt.Println("For the outer sort... length of list is ", len(*inputList))
 		higher, lower := promptToSortTwoInputs(s1, s2)
 		winners = append(winners, higher)
 		losers = append(losers, lower)
 		pairings[higher] = lower // for step 4
+		// fmt.Println("Current state of list: ", len(*inputList) > 1)
+		// printSlice(*inputList)
 	}
 	if len(*inputList) == 1 {
 		losers = append(losers, (*inputList)[0])
@@ -64,16 +67,17 @@ func mergeInsertionSortAscending(inputList *[]string) {
 	/*
 	Recursively sort the ⌊ n / 2 ⌋ {\displaystyle \lfloor n/2\rfloor } larger elements from each pair, creating a sorted sequence S {\displaystyle S} of ⌊ n / 2 ⌋ {\displaystyle \lfloor n/2\rfloor } of the input elements, in ascending order, using the merge-insertion sort.
 	*/
+	fmt.Println("RECURRRRSSSSSIIOOOOOONNNNN------------------------------------")
 	mergeInsertionSortAscending(&winners)
 
 	// Step 4
 	/*
 	Insert at the start of S {\displaystyle S} the element that was paired with the first and smallest element of S {\displaystyle S}.
 	*/
-	fmt.Println("BEFORE STEP 3: \nWINNERS: ")
-	printSlice(winners)
-	fmt.Println("LOSERS: ")
-	printSlice(losers)
+	// fmt.Println("BEFORE STEP 4: \nWINNERS: ")
+	// printSlice(winners)
+	// fmt.Println("LOSERS: ")
+	// printSlice(losers)
 
 	worstLoser := pairings[winners[0]]
 	winners = append([]string{worstLoser}, winners...)
@@ -86,10 +90,10 @@ func mergeInsertionSortAscending(inputList *[]string) {
 	}
 	losers = append(losers[:indexOfWorstLoser], losers[indexOfWorstLoser+1:]...)
 
-	fmt.Println("AFTER STEP 3: \nWINNERS: ")
-	printSlice(winners)
-	fmt.Println("LOSERS: ")
-	printSlice(losers)
+	// fmt.Println("AFTER STEP 4: \nWINNERS: ")
+	// printSlice(winners)
+	// fmt.Println("LOSERS: ")
+	// printSlice(losers)
 
 	// Step 5
 	// TODO insertion sort is not the optimal way to sort the remainder of the list
@@ -101,23 +105,23 @@ func mergeInsertionSortAscending(inputList *[]string) {
 	*inputList = winners
 }
 
-func insertionSortAscending(sortedList *[]string, unsortedList *[]string) {
-	for len(*unsortedList) != 0 {
-		toSort := removeRandomElement(unsortedList)
-		*sortedList = append([]string{toSort}, *sortedList...)
-		for i := range len(*sortedList)-1 {
-			higher, _ := promptToSortTwoInputs((*sortedList)[i], (*sortedList)[i+1])
-			if toSort == higher {
-				// Out of order, need to swap
-				(*sortedList)[i] = (*sortedList)[i+1]
-				(*sortedList)[i+1] = toSort
-			} else {
-				// In correct order, no need to continue through the sorted list
-				break
-			}
-		}
-	}
-}
+// func insertionSortAscending(sortedList *[]string, unsortedList *[]string) {
+// 	for len(*unsortedList) != 0 {
+// 		toSort := removeRandomElement(unsortedList)
+// 		*sortedList = append([]string{toSort}, *sortedList...)
+// 		for i := range len(*sortedList)-1 {
+// 			higher, _ := promptToSortTwoInputs((*sortedList)[i], (*sortedList)[i+1])
+// 			if toSort == higher {
+// 				// Out of order, need to swap
+// 				(*sortedList)[i] = (*sortedList)[i+1]
+// 				(*sortedList)[i+1] = toSort
+// 			} else {
+// 				// In correct order, no need to continue through the sorted list
+// 				break
+// 			}
+// 		}
+// 	}
+// }
 
 func binaryInsertionSort(unsortedList *[]string, sortedList *[]string) {
 	fmt.Println("ENTERING BINARY INSERTION SORT-------------")
