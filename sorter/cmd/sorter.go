@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"slices"
+	"strings"
 )
 
 const mainFilePath = "todo.txt"
@@ -29,6 +30,7 @@ func main() {
 	// to estimate the number of comparisons required. Display the value and keep displaying count of
 	// "Estimated comparison's remaining". Don't do this without unit tests.
 	mainFile, err := os.Open(mainFilePath)
+	// mainFile, err := os.OpenFile(mainFilePath, os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		panic(err)
 	}
@@ -36,9 +38,9 @@ func main() {
 		if err := mainFile.Close(); err != nil {
 			panic(err)
 		}
-		if err := backupFile.Close(); err != nil {
-			panic(err)
-		}
+		// if err := backupFile.Close(); err != nil {
+		// 	panic(err)
+		// }
 	}()
 	inputList := make([]string, 0)
 	scanner := bufio.NewScanner(mainFile)
@@ -47,6 +49,8 @@ func main() {
 		inputList = append(inputList, readLine)
 		writeLineToBackupFile(readLine)
 	}
+	// writeLineToBackupFile("test")
+	// writeLineToMainFile("test")
 	mergeInsertionSortAscending(&inputList)
 	fmt.Println("Sorted list: ")
 	slices.Reverse(inputList)
@@ -66,11 +70,11 @@ func mergeInsertionSortAscending(inputList *[]string) {
 
 	// Steps 1 and 2
 	/*
-	Group the elements of X {\displaystyle X} into ⌊ n / 2 ⌋ {\displaystyle \lfloor n/2\rfloor } pairs of elements, arbitrarily, leaving one element unpaired if there is an odd number of elements.
-	Perform ⌊ n / 2 ⌋ {\displaystyle \lfloor n/2\rfloor } comparisons, one per pair, to determine the larger of the two elements in each pair.
+		Group the elements of X {\displaystyle X} into ⌊ n / 2 ⌋ {\displaystyle \lfloor n/2\rfloor } pairs of elements, arbitrarily, leaving one element unpaired if there is an odd number of elements.
+		Perform ⌊ n / 2 ⌋ {\displaystyle \lfloor n/2\rfloor } comparisons, one per pair, to determine the larger of the two elements in each pair.
 	*/
-	winners := make([]string, 0, len(*inputList)/2 + 1)
-	losers := make([]string, 0, len(*inputList)/2 + 1)
+	winners := make([]string, 0, len(*inputList)/2+1)
+	losers := make([]string, 0, len(*inputList)/2+1)
 	pairings := make(map[string]string) // the loser, indexed by the winner
 
 	for len(*inputList) > 1 {
@@ -87,13 +91,13 @@ func mergeInsertionSortAscending(inputList *[]string) {
 
 	// Step 3
 	/*
-	Recursively sort the ⌊ n / 2 ⌋ {\displaystyle \lfloor n/2\rfloor } larger elements from each pair, creating a sorted sequence S {\displaystyle S} of ⌊ n / 2 ⌋ {\displaystyle \lfloor n/2\rfloor } of the input elements, in ascending order, using the merge-insertion sort.
+		Recursively sort the ⌊ n / 2 ⌋ {\displaystyle \lfloor n/2\rfloor } larger elements from each pair, creating a sorted sequence S {\displaystyle S} of ⌊ n / 2 ⌋ {\displaystyle \lfloor n/2\rfloor } of the input elements, in ascending order, using the merge-insertion sort.
 	*/
 	mergeInsertionSortAscending(&winners)
 
 	// Step 4
 	/*
-	Insert at the start of S {\displaystyle S} the element that was paired with the first and smallest element of S {\displaystyle S}.
+		Insert at the start of S {\displaystyle S} the element that was paired with the first and smallest element of S {\displaystyle S}.
 	*/
 	worstLoser := pairings[winners[0]]
 	winners = append([]string{worstLoser}, winners...)
@@ -108,7 +112,7 @@ func mergeInsertionSortAscending(inputList *[]string) {
 
 	// Step 5
 	/*
-	Insert the remaining ⌈ n / 2 ⌉ − 1 {\displaystyle \lceil n/2\rceil -1} elements of X ∖ S {\displaystyle X\setminus S} into S {\displaystyle S}, one at a time, with a specially chosen insertion ordering described below. Use binary search in subsequences of S {\displaystyle S} (as described below) to determine the position at which each element should be inserted.
+		Insert the remaining ⌈ n / 2 ⌉ − 1 {\displaystyle \lceil n/2\rceil -1} elements of X ∖ S {\displaystyle X\setminus S} into S {\displaystyle S}, one at a time, with a specially chosen insertion ordering described below. Use binary search in subsequences of S {\displaystyle S} (as described below) to determine the position at which each element should be inserted.
 	*/
 	binaryInsertionSortAscending(&losers, &winners)
 
@@ -136,7 +140,7 @@ func mergeInsertionSortAscending(inputList *[]string) {
 func binaryInsertionSortAscending(unsortedList *[]string, sortedList *[]string) {
 	for len(*unsortedList) != 0 {
 		toSort := removeRandomElement(unsortedList)
-		if (len(*sortedList) == 0) {
+		if len(*sortedList) == 0 {
 			*sortedList = []string{toSort}
 		} else {
 			locationToInsert := determineSortedLocationViaBinarySearch(toSort, *sortedList)
@@ -163,13 +167,11 @@ func determineSortedLocationViaBinarySearch(newItem string, sortedList []string)
 	var middleIndex int = len(sortedList)/2 - 1
 	higher, _ := promptToSortTwoInputs(newItem, sortedList[middleIndex])
 	if newItem == higher {
-		return middleIndex+1 + determineSortedLocationViaBinarySearch(newItem, sortedList[middleIndex+1:])
+		return middleIndex + 1 + determineSortedLocationViaBinarySearch(newItem, sortedList[middleIndex+1:])
 	} else {
 		return determineSortedLocationViaBinarySearch(newItem, sortedList[:middleIndex])
 	}
 }
-
-
 
 // promptToSortTwoInputs prompts the user to enter the higher of the inputs, then returns them in order
 func promptToSortTwoInputs(s1 string, s2 string) (string, string) {
@@ -201,7 +203,7 @@ func removeRandomElement(inputList *[]string) string {
 
 func removeElementAtIndex(index int, inputList *[]string) string {
 	res := (*inputList)[index]
-	(*inputList) = append((*inputList)[:index], (*inputList)[index + 1:]...)
+	(*inputList) = append((*inputList)[:index], (*inputList)[index+1:]...)
 	return res
 }
 
@@ -221,7 +223,7 @@ func writeLineToBackupFile(line string) {
 	_, err := backupFile.WriteString(line)
 	if err != nil {
 		fmt.Println("Error writing to backup file. Exiting.")
-		// panic(err)
+		panic(err)
 	}
 	_, err = backupFile.WriteString("\n")
 	if err != nil {
@@ -232,23 +234,13 @@ func writeLineToBackupFile(line string) {
 
 func writeNewListToFile(newList []string) error {
 	os.Create(mainFilePath) // Clears the existing file (but we backed it up)
-	for _, item := range newList {
-		writeLineToMainFile(item)
-	}
-	return nil // Should actually bubble up errors
-}
-
-
-func writeLineToMainFile(line string) {
-	// fmt.Println("Writing to file: ", line)
-	_, err := mainFile.WriteString(line)
 	if err != nil {
-		fmt.Println("Error writing to file. Exiting.")
+		fmt.Println("Error clearing main file. Exiting.")
 		panic(err)
 	}
-	_, err = mainFile.WriteString("\n")
-	if err != nil {
-		fmt.Println("Error writing to file. Exiting.")
-		panic(err)
-	}
+
+	err = os.WriteFile(mainFilePath, []byte(strings.Join(newList, "\n")), 0644)
+	return nil // Should actually bubble up errors, and if we run into an error after erasing the file,
+	// try to copy over the backup contents
 }
+
