@@ -23,14 +23,14 @@ func main() {
 	for scanner.Scan() {
 		inputList = append(inputList, scanner.Text())
 	}
-	mergeInsertionSort(&inputList)
+	mergeInsertionSortAscending(&inputList)
 	fmt.Println("Sorted list: ")
 	slices.Reverse(inputList)
 	printSlice(inputList)
 }
 
-// mergeInsertionSort performs the merge-insertion sort: https://en.wikipedia.org/wiki/Merge-insertion_sort
-func mergeInsertionSort(inputList *[]string) {
+// mergeInsertionSortAscending performs the merge-insertion sort: https://en.wikipedia.org/wiki/Merge-insertion_sort
+func mergeInsertionSortAscending(inputList *[]string) {
 	if len(*inputList) == 1 {
 		return
 	}
@@ -51,7 +51,7 @@ func mergeInsertionSort(inputList *[]string) {
 	}
 
 	// Step 3
-	mergeInsertionSort(&winners)
+	mergeInsertionSortAscending(&winners)
 
 	// Step 4
 	// skip for now, TODO, add step 4 to reduce comparisons
@@ -66,7 +66,7 @@ func mergeInsertionSort(inputList *[]string) {
 	*inputList = winners
 }
 
-func insertionSort(sortedList *[]string, unsortedList *[]string) {
+func insertionSortAscending(sortedList *[]string, unsortedList *[]string) {
 	for len(*unsortedList) != 0 {
 		toSort := removeRandomElement(unsortedList)
 		*sortedList = append([]string{toSort}, *sortedList...)
@@ -85,25 +85,50 @@ func insertionSort(sortedList *[]string, unsortedList *[]string) {
 }
 
 func binaryInsertionSort(sortedList *[]string, unsortedList *[]string) {
+	fmt.Println("\nSorted list: ")
+	printSlice(*sortedList)
+	fmt.Println("\nUnsorted list: ")
+	printSlice(*unsortedList)
+
 	for len(*unsortedList) != 0 {
 		toSort := removeRandomElement(unsortedList)
-		locationToInsert := determineSortedLocationViaBinarySearch(toSort, *sortedList)
-		(*sortedList) = append(append((*sortedList)[:locationToInsert], toSort), (*sortedList)[locationToInsert+1:]...)
+		if (len(*sortedList) == 0) {
+			*sortedList = []string{toSort}
+		} else {
+			locationToInsert := determineSortedLocationViaBinarySearch(toSort, *sortedList)
+			fmt.Println("\nInserting: ", toSort)
+			fmt.Println("at location : ", locationToInsert)
+			//(*sortedList) = append(append((*sortedList)[:locationToInsert], toSort), (*sortedList)[locationToInsert+1:]...)
+			(*sortedList) = slices.Insert((*sortedList), locationToInsert, toSort)
+		}
+		fmt.Println("\nSorted list: ")
+		printSlice(*sortedList)
+		fmt.Println("\nUnsorted list: ")
+		printSlice(*unsortedList)
 	}
 }
 
 func determineSortedLocationViaBinarySearch(newItem string, sortedList []string) int {
 	// Base case
-	if len(sortedList) == 1 {
+	if len(sortedList) == 0 {
+		return 0
+	} else if len(sortedList) == 1 {
+		fmt.Println("Base case: ", newItem)
 		higher, _ := promptToSortTwoInputs(newItem, sortedList[0])
 		if newItem == higher {
+			fmt.Println("1")
 			return 1
 		} else {
+			fmt.Println("0")
 			return 0
 		}
 	}
 
 	var middleIndex int = len(sortedList)/2
+	fmt.Println("Middle index: ", middleIndex)
+	fmt.Println("of sorted list: ")
+	printSlice(sortedList)
+	fmt.Println("with length ", len(sortedList))
 	higher, _ := promptToSortTwoInputs(newItem, sortedList[middleIndex])
 	if newItem == higher {
 		return middleIndex + determineSortedLocationViaBinarySearch(newItem, sortedList[middleIndex+1:])
@@ -152,4 +177,5 @@ func printSlice(inputList []string) {
 	for _, item := range inputList {
 		fmt.Println(item)
 	}
+	fmt.Println("-------End of list")
 }
