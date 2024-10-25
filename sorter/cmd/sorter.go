@@ -8,9 +8,11 @@ import (
 	"slices"
 )
 
+const mainFilePath = "todo.txt"
 const backupFilePath = "todo.txt.bak"
 
 var numberOfComparisons = 0
+var mainFile *os.File
 var backupFile *os.File
 var err error
 
@@ -19,23 +21,27 @@ func main() {
 	backupFile, err = createBackupFile()
 	if err != nil {
 		fmt.Println("Error creating backup file. Exiting.")
+		panic(err)
 	}
 
 	// TODO
 	// Upon reading in the file, use the formula at https://en.wikipedia.org/wiki/Merge-insertion_sort
 	// to estimate the number of comparisons required. Display the value and keep displaying count of
 	// "Estimated comparison's remaining". Don't do this without unit tests.
-	file, err := os.Open("todo.txt")
+	mainFile, err := os.Open(mainFilePath)
 	if err != nil {
 		panic(err)
 	}
 	defer func() {
-		if err := file.Close(); err != nil {
+		if err := mainFile.Close(); err != nil {
+			panic(err)
+		}
+		if err := backupFile.Close(); err != nil {
 			panic(err)
 		}
 	}()
 	inputList := make([]string, 0)
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(mainFile)
 	for scanner.Scan() {
 		readLine := scanner.Text()
 		inputList = append(inputList, readLine)
@@ -44,14 +50,17 @@ func main() {
 	mergeInsertionSortAscending(&inputList)
 	fmt.Println("Sorted list: ")
 	slices.Reverse(inputList)
+
 	printSlice(inputList)
+
+	writeNewListToFile(inputList)
 
 	fmt.Println("Total comparisons: ", numberOfComparisons)
 }
 
 // mergeInsertionSortAscending performs the merge-insertion sort: https://en.wikipedia.org/wiki/Merge-insertion_sort
 func mergeInsertionSortAscending(inputList *[]string) {
-	if len(*inputList) == 1 {
+	if len(*inputList) <= 1 {
 		return
 	}
 
@@ -212,9 +221,34 @@ func writeLineToBackupFile(line string) {
 	_, err := backupFile.WriteString(line)
 	if err != nil {
 		fmt.Println("Error writing to backup file. Exiting.")
+		// panic(err)
 	}
 	_, err = backupFile.WriteString("\n")
 	if err != nil {
 		fmt.Println("Error writing to backup file. Exiting.")
+		panic(err)
+	}
+}
+
+func writeNewListToFile(newList []string) error {
+	os.Create(mainFilePath) // Clears the existing file (but we backed it up)
+	for _, item := range newList {
+		writeLineToMainFile(item)
+	}
+	return nil // Should actually bubble up errors
+}
+
+
+func writeLineToMainFile(line string) {
+	// fmt.Println("Writing to file: ", line)
+	_, err := mainFile.WriteString(line)
+	if err != nil {
+		fmt.Println("Error writing to file. Exiting.")
+		panic(err)
+	}
+	_, err = mainFile.WriteString("\n")
+	if err != nil {
+		fmt.Println("Error writing to file. Exiting.")
+		panic(err)
 	}
 }
