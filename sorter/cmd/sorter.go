@@ -171,8 +171,10 @@ func determineSortedLocationViaBinarySearch(newItem string, sortedList []string)
 	fmt.Println("with length ", len(sortedList))
 	higher, _ := promptToSortTwoInputs(newItem, sortedList[middleIndex])
 	if newItem == higher {
-		return middleIndex + determineSortedLocationViaBinarySearch(newItem, sortedList[middleIndex+1:])
+		fmt.Println("new item is higher")
+		return middleIndex+1 + determineSortedLocationViaBinarySearch(newItem, sortedList[middleIndex+1:])
 	} else {
+		fmt.Println("new item is lower")
 		return determineSortedLocationViaBinarySearch(newItem, sortedList[:middleIndex])
 	}
 }
