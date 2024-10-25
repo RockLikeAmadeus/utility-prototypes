@@ -51,13 +51,10 @@ func mergeInsertionSortAscending(inputList *[]string) {
 	for len(*inputList) > 1 {
 		s1 := removeRandomElement(inputList)
 		s2 := removeRandomElement(inputList)
-		fmt.Println("For the outer sort... length of list is ", len(*inputList))
 		higher, lower := promptToSortTwoInputs(s1, s2)
 		winners = append(winners, higher)
 		losers = append(losers, lower)
-		pairings[higher] = lower // for step 4
-		// fmt.Println("Current state of list: ", len(*inputList) > 1)
-		// printSlice(*inputList)
+		pairings[higher] = lower // used in step 4
 	}
 	if len(*inputList) == 1 {
 		losers = append(losers, (*inputList)[0])
@@ -67,18 +64,12 @@ func mergeInsertionSortAscending(inputList *[]string) {
 	/*
 	Recursively sort the ⌊ n / 2 ⌋ {\displaystyle \lfloor n/2\rfloor } larger elements from each pair, creating a sorted sequence S {\displaystyle S} of ⌊ n / 2 ⌋ {\displaystyle \lfloor n/2\rfloor } of the input elements, in ascending order, using the merge-insertion sort.
 	*/
-	fmt.Println("RECURRRRSSSSSIIOOOOOONNNNN------------------------------------")
 	mergeInsertionSortAscending(&winners)
 
 	// Step 4
 	/*
 	Insert at the start of S {\displaystyle S} the element that was paired with the first and smallest element of S {\displaystyle S}.
 	*/
-	// fmt.Println("BEFORE STEP 4: \nWINNERS: ")
-	// printSlice(winners)
-	// fmt.Println("LOSERS: ")
-	// printSlice(losers)
-
 	worstLoser := pairings[winners[0]]
 	winners = append([]string{worstLoser}, winners...)
 	indexOfWorstLoser := 0
@@ -90,17 +81,11 @@ func mergeInsertionSortAscending(inputList *[]string) {
 	}
 	losers = append(losers[:indexOfWorstLoser], losers[indexOfWorstLoser+1:]...)
 
-	// fmt.Println("AFTER STEP 4: \nWINNERS: ")
-	// printSlice(winners)
-	// fmt.Println("LOSERS: ")
-	// printSlice(losers)
-
 	// Step 5
-	// TODO insertion sort is not the optimal way to sort the remainder of the list
-	// Instead, I need to insert using a *binary search*, as described by wikipedia, above.
-	// Also see: https://www.geeksforgeeks.org/binary-insertion-sort/
-	binaryInsertionSort(&losers, &winners)
-	// insertionSortAscending(&winners, &losers)
+	/*
+	Insert the remaining ⌈ n / 2 ⌉ − 1 {\displaystyle \lceil n/2\rceil -1} elements of X ∖ S {\displaystyle X\setminus S} into S {\displaystyle S}, one at a time, with a specially chosen insertion ordering described below. Use binary search in subsequences of S {\displaystyle S} (as described below) to determine the position at which each element should be inserted.
+	*/
+	binaryInsertionSortAscending(&losers, &winners)
 
 	*inputList = winners
 }
@@ -123,28 +108,15 @@ func mergeInsertionSortAscending(inputList *[]string) {
 // 	}
 // }
 
-func binaryInsertionSort(unsortedList *[]string, sortedList *[]string) {
-	fmt.Println("ENTERING BINARY INSERTION SORT-------------")
-	fmt.Println("\nSorted list: ")
-	printSlice(*sortedList)
-	fmt.Println("\nUnsorted list: ")
-	printSlice(*unsortedList)
-
+func binaryInsertionSortAscending(unsortedList *[]string, sortedList *[]string) {
 	for len(*unsortedList) != 0 {
 		toSort := removeRandomElement(unsortedList)
 		if (len(*sortedList) == 0) {
 			*sortedList = []string{toSort}
 		} else {
 			locationToInsert := determineSortedLocationViaBinarySearch(toSort, *sortedList)
-			fmt.Println("\nInserting: ", toSort)
-			fmt.Println("at location : ", locationToInsert)
-			//(*sortedList) = append(append((*sortedList)[:locationToInsert], toSort), (*sortedList)[locationToInsert+1:]...)
 			(*sortedList) = slices.Insert((*sortedList), locationToInsert, toSort)
 		}
-		fmt.Println("\nSorted list: ")
-		printSlice(*sortedList)
-		fmt.Println("\nUnsorted list: ")
-		printSlice(*unsortedList)
 	}
 }
 
@@ -153,7 +125,6 @@ func determineSortedLocationViaBinarySearch(newItem string, sortedList []string)
 	if len(sortedList) == 0 {
 		return 0
 	} else if len(sortedList) == 1 {
-		fmt.Println("Base case: ", newItem)
 		higher, _ := promptToSortTwoInputs(newItem, sortedList[0])
 		if newItem == higher {
 			fmt.Println("1")
@@ -165,16 +136,10 @@ func determineSortedLocationViaBinarySearch(newItem string, sortedList []string)
 	}
 
 	var middleIndex int = len(sortedList)/2 - 1
-	fmt.Println("Middle index: ", middleIndex)
-	fmt.Println("of sorted list: ")
-	printSlice(sortedList)
-	fmt.Println("with length ", len(sortedList))
 	higher, _ := promptToSortTwoInputs(newItem, sortedList[middleIndex])
 	if newItem == higher {
-		fmt.Println("new item is higher")
 		return middleIndex+1 + determineSortedLocationViaBinarySearch(newItem, sortedList[middleIndex+1:])
 	} else {
-		fmt.Println("new item is lower")
 		return determineSortedLocationViaBinarySearch(newItem, sortedList[:middleIndex])
 	}
 }
