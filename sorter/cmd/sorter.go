@@ -8,6 +8,8 @@ import (
 	"slices"
 )
 
+var numberOfComparisons = 0
+
 func main() {
 	file, err := os.Open("todo.txt")
 	if err != nil {
@@ -27,6 +29,8 @@ func main() {
 	fmt.Println("Sorted list: ")
 	slices.Reverse(inputList)
 	printSlice(inputList)
+
+	fmt.Println("Total comparisons: ", numberOfComparisons)
 }
 
 // mergeInsertionSortAscending performs the merge-insertion sort: https://en.wikipedia.org/wiki/Merge-insertion_sort
@@ -36,8 +40,13 @@ func mergeInsertionSortAscending(inputList *[]string) {
 	}
 
 	// Steps 1 and 2
+	/*
+	Group the elements of X {\displaystyle X} into ⌊ n / 2 ⌋ {\displaystyle \lfloor n/2\rfloor } pairs of elements, arbitrarily, leaving one element unpaired if there is an odd number of elements.
+	Perform ⌊ n / 2 ⌋ {\displaystyle \lfloor n/2\rfloor } comparisons, one per pair, to determine the larger of the two elements in each pair.
+	*/
 	winners := make([]string, 0, len(*inputList)/2 + 1)
 	losers := make([]string, 0, len(*inputList)/2 + 1)
+	pairings := make(map[string]string) // the loser, index by the winner
 
 	for len(*inputList) > 1 {
 		s1 := removeRandomElement(inputList)
@@ -45,16 +54,42 @@ func mergeInsertionSortAscending(inputList *[]string) {
 		higher, lower := promptToSortTwoInputs(s1, s2)
 		winners = append(winners, higher)
 		losers = append(losers, lower)
+		pairings[higher] = lower // for step 4
 	}
 	if len(*inputList) == 1 {
 		losers = append(losers, (*inputList)[0])
 	}
 
 	// Step 3
+	/*
+	Recursively sort the ⌊ n / 2 ⌋ {\displaystyle \lfloor n/2\rfloor } larger elements from each pair, creating a sorted sequence S {\displaystyle S} of ⌊ n / 2 ⌋ {\displaystyle \lfloor n/2\rfloor } of the input elements, in ascending order, using the merge-insertion sort.
+	*/
 	mergeInsertionSortAscending(&winners)
 
 	// Step 4
-	// skip for now, TODO, add step 4 to reduce comparisons
+	/*
+	Insert at the start of S {\displaystyle S} the element that was paired with the first and smallest element of S {\displaystyle S}.
+	*/
+	fmt.Println("BEFORE STEP 3: \nWINNERS: ")
+	printSlice(winners)
+	fmt.Println("LOSERS: ")
+	printSlice(losers)
+
+	worstLoser := pairings[winners[0]]
+	winners = append([]string{worstLoser}, winners...)
+	indexOfWorstLoser := 0
+	for i, v := range losers {
+		if worstLoser == v {
+			indexOfWorstLoser = i
+			break
+		}
+	}
+	losers = append(losers[:indexOfWorstLoser], losers[indexOfWorstLoser+1:]...)
+
+	fmt.Println("AFTER STEP 3: \nWINNERS: ")
+	printSlice(winners)
+	fmt.Println("LOSERS: ")
+	printSlice(losers)
 
 	// Step 5
 	// TODO insertion sort is not the optimal way to sort the remainder of the list
@@ -141,6 +176,7 @@ func determineSortedLocationViaBinarySearch(newItem string, sortedList []string)
 
 // promptToSortTwoInputs prompts the user to enter the higher of the inputs, then returns them in order
 func promptToSortTwoInputs(s1 string, s2 string) (string, string) {
+	numberOfComparisons++
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Choose the larger of: ")
 	fmt.Println("1. ", s1)
