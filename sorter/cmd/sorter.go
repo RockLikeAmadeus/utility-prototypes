@@ -11,6 +11,10 @@ import (
 var numberOfComparisons = 0
 
 func main() {
+	// TODO
+	// Upon reading in the file, use the formula at https://en.wikipedia.org/wiki/Merge-insertion_sort
+	// to estimate the number of comparisons required. Display the value and keep displaying count of
+	// "Estimated comparison's remaining". Don't do this without unit tests.
 	file, err := os.Open("todo.txt")
 	if err != nil {
 		panic(err)
