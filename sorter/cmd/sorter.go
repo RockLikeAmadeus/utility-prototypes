@@ -95,8 +95,8 @@ func mergeInsertionSortAscending(inputList *[]string) {
 	// TODO insertion sort is not the optimal way to sort the remainder of the list
 	// Instead, I need to insert using a *binary search*, as described by wikipedia, above.
 	// Also see: https://www.geeksforgeeks.org/binary-insertion-sort/
-	binaryInsertionSort(&winners, &losers)
-	// insertionSort(&winners, &losers)
+	binaryInsertionSort(&losers, &winners)
+	// insertionSortAscending(&winners, &losers)
 
 	*inputList = winners
 }
@@ -119,7 +119,8 @@ func insertionSortAscending(sortedList *[]string, unsortedList *[]string) {
 	}
 }
 
-func binaryInsertionSort(sortedList *[]string, unsortedList *[]string) {
+func binaryInsertionSort(unsortedList *[]string, sortedList *[]string) {
+	fmt.Println("ENTERING BINARY INSERTION SORT-------------")
 	fmt.Println("\nSorted list: ")
 	printSlice(*sortedList)
 	fmt.Println("\nUnsorted list: ")
@@ -159,7 +160,7 @@ func determineSortedLocationViaBinarySearch(newItem string, sortedList []string)
 		}
 	}
 
-	var middleIndex int = len(sortedList)/2
+	var middleIndex int = len(sortedList)/2 - 1
 	fmt.Println("Middle index: ", middleIndex)
 	fmt.Println("of sorted list: ")
 	printSlice(sortedList)

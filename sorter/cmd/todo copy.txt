@@ -3,3 +3,5 @@ Sixth priority task
 Second priority task
 Top priority task
 Fifth priority task
+Third priority task
+Seventh priority task
