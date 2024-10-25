@@ -57,7 +57,11 @@ func mergeInsertionSort(inputList *[]string) {
 	// skip for now, TODO, add step 4 to reduce comparisons
 
 	// Step 5
-	insertionSort(&winners, &losers)
+	// TODO insertion sort is not the optimal way to sort the remainder of the list
+	// Instead, I need to insert using a *binary search*, as described by wikipedia, above.
+	// Also see: https://www.geeksforgeeks.org/binary-insertion-sort/
+	binaryInsertionSort(&winners, &losers)
+	// insertionSort(&winners, &losers)
 
 	*inputList = winners
 }
@@ -77,6 +81,34 @@ func insertionSort(sortedList *[]string, unsortedList *[]string) {
 				break
 			}
 		}
+	}
+}
+
+func binaryInsertionSort(sortedList *[]string, unsortedList *[]string) {
+	for len(*unsortedList) != 0 {
+		toSort := removeRandomElement(unsortedList)
+		locationToInsert := determineSortedLocationViaBinarySearch(toSort, *sortedList)
+		(*sortedList) = append(append((*sortedList)[:locationToInsert], toSort), (*sortedList)[locationToInsert+1:]...)
+	}
+}
+
+func determineSortedLocationViaBinarySearch(newItem string, sortedList []string) int {
+	// Base case
+	if len(sortedList) == 1 {
+		higher, _ := promptToSortTwoInputs(newItem, sortedList[0])
+		if newItem == higher {
+			return 1
+		} else {
+			return 0
+		}
+	}
+
+	var middleIndex int = len(sortedList)/2
+	higher, _ := promptToSortTwoInputs(newItem, sortedList[middleIndex])
+	if newItem == higher {
+		return middleIndex + determineSortedLocationViaBinarySearch(newItem, sortedList[middleIndex+1:])
+	} else {
+		return determineSortedLocationViaBinarySearch(newItem, sortedList[:middleIndex])
 	}
 }
 
